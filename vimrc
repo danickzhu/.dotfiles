@@ -26,7 +26,7 @@ if has('cmdline_info')
     set showcmd         " show partical commands in status line
 endif
 
-filetype off        " necessary to make ftdetect work on Linux
+"filetype off        " necessary to make ftdetect work on Linux
 syntax on           " highlight
 filetype on         " Enable filetype detection
 filetype indent plugin on " Enable filetype-specific indenting
@@ -111,8 +111,12 @@ map <C-t><C-t> :tabnew<CR>  " new tab
 map <C-t><C-w> :tabclose<CR>    " close tab
 
 " remove trailing white space and ^M chars
-autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml autocmd BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
+autocmd FileType c,cpp,java,php,javascript,python,twig,xml,yml,pig autocmd BufWritePre <buffer> :call setline(1,map(getline(1,"$"),'substitute(v:val,"\\s\\+$","","")'))
 autocmd BufNewFile,BufRead *.html.twig set filetype=html.twig
+
+augroup filetypedetect
+    au BufNewFile,BufRead *.pig set filetype=pig syntax=pig
+augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Bundle configuration
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -149,6 +153,14 @@ if exists(":Tabularize")
 endif
 " Buffer explorer
 nmap <leader>b :BufExplorer<CR>
+" ctrlp
+let g:ctrlp_working_path_mode = 2
+nnoremap <silent> <D-t> :CtrlP<CR>      " Mac only <C-P> can invloke
+nnoremap <silent> <D-r> :CtrlPMRU<CR>   " Mac only
+let g:ctrlp_custom_ignore = {
+            \ 'dir':  '\.git$\|\.hg$\|\.svn$',
+            \ 'file': '\.exe$\|\.so$\|\.dll$' }
+" easymotion is not working
 " Neocomplcache
 let g:acp_enableAtStartup = 0   " Disable autocomplpoop
 let g:neocomplcache_enable_at_startup = 1
@@ -178,8 +190,7 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
 inoremap <expr><C-g>   neocomplcache#undo_completion()
 inoremap <expr><C-l>   neocomplcache#complete_common_string()
-inoremap <expr><CR>    neocomplcache#complete_common_string()
-
+inoremap <expr><CR>  pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 " <TAB> completion
 imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
             \ "\<Plug>(neosnippet_expand_or_jump)"
